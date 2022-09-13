@@ -1,3 +1,10 @@
+-- See all tables in the SQLite Database
+SELECT name
+FROM sqlite_master
+WHERE type="table";
+
+-- See all columns from tables;
+
 SELECT *
 FROM customer;
 
@@ -59,3 +66,36 @@ SELECT Contract,
 FROM cust_account
 GROUP BY  Contract
 ORDER BY  C desc;
+
+-- Information about Churn (cust_churn)
+select Churn, count(Churn) from cust_churn group by Churn;
+
+-- TotalCharges grouped by Churn
+SELECT cc.Churn,
+         avg(ca.TotalCharges)
+FROM cust_churn cc
+INNER JOIN cust_account ca
+    ON ca.Account_id = cc.Id
+GROUP BY  cc.Churn;
+
+-- MonthlyCharges grouped by Churn
+SELECT cc.Churn,
+         avg(ca.MonthlyCharges)
+FROM cust_churn cc
+INNER JOIN cust_account ca
+    ON ca.Account_id = cc.Id
+GROUP BY  cc.Churn;
+
+-- Contract grouped by Churn
+SELECT cc.Churn,
+         ca.Contract count(ca.Contract)
+FROM cust_churn cc
+INNER JOIN cust_account ca
+    ON ca.Account_id = cc.Id
+GROUP BY  cc.Churn, ca.Contract;
+
+
+-- Correct values for churn_all table
+UPDATE churn_all SET TotalCharges = '0.00'
+WHERE Churn = 'No'
+        AND typeof(TotalCharges) != 'text';
